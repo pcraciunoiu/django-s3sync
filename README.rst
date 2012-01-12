@@ -11,7 +11,7 @@ Keep your static and user-uploaded media in sync between your local machine and 
 This project is inspired by `django-extensions's sync_media_s3 <https://github.com/django-extensions/django-extensions/blob/master/django_extensions/management/commands/sync_media_s3.py>`_ management command.
 
 Limitations
-~~~~~~~~~~~
+-----------
 
 * This app only works with Django's ``FileSystemStorage`` backend. You are welcome to file a pull request to fix this limitation, feel free to ask me for help :)
 * Using symlinks (``ln -s``) in your static media has not been tested, and is assumed not to work.
@@ -50,7 +50,8 @@ Installation
 #. Run this on a cron::
 
     # Be sure to use your media prefix here.
-    python manage.py s3sync_pending --prefix=media
+    # --remove-missing ensures deleting files locally propagates to S3
+    python manage.py s3sync_pending --prefix=media --remove-missing
 
 #. To sync your static media, see `cron.py <https://github.com/pcraciunoiu/django-s3sync/tree/master/example/cron.py>`_
 
@@ -61,11 +62,26 @@ Already using a custom File storage backend?
 If you're already using your own File storage backend, extend s3sync's storage::
 
     from s3sync.storage import S3PendingStorage
-     
+
     class YourCustomStorage(S3PendingStorage):
         # Override with your storage methods here.
         pass
 
+Tips and Tricks
+---------------
+
+Alias your bucket URL
+~~~~~~~~~~~~~~~~~~~~~
+
+Make your bucket URL nice and clean and hide the URL to amazonaws.com.
+
+* Make sure to name your bucket ``something.yourdomain.com``
+* Using your DNS service (e.g. Route 53), create a CNAME record named ``something.yourdomain.com`` with a value of (pointing to) the `website endpoint <http://docs.amazonwebservices.com/AmazonS3/latest/dev/WebsiteEndpoints.html>`_ for your bucket's region, e.g. ``s3-website-us-west-1.amazonaws.com``
+
+Multiple web servers?
+~~~~~~~~~~~~~~~~~~~~~
+
+If you need to access the files from multiple web servers before they get uploadd to S3, you can use a dedicated EC2 instance or 3rd party server to mount as a partition on all of your machines. Going the EC2 instance route is probably your best bet to minimize latency.
 
 Usage
 -----
@@ -105,6 +121,9 @@ Command options are::
                         The prefix to prepend to the path on S3.
   -d DIRECTORY, --dir=DIRECTORY
                         The root directory to use instead of your MEDIA_ROOT
+  --remove-missing
+                        Remove any existing keys from the bucket that are not
+                        present in your local. DANGEROUS!
   --dry-run
                         Do a dry-run to show what files would be affected.
 

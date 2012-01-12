@@ -19,6 +19,9 @@ Command options are:
                         The prefix to prepend to the path on S3.
   -d DIRECTORY, --dir=DIRECTORY
                         The root directory to use instead of your MEDIA_ROOT
+  --remove-missing
+                        Remove any existing keys from the bucket that are not
+                        present in your local. DANGEROUS!
   --dry-run
                         Do a dry-run to show what files would be affected.
 
@@ -52,6 +55,9 @@ class Command(BaseCommand):
             dest='dir',
             default='',
             help="The root directory to use instead of your MEDIA_ROOT"),
+        optparse.make_option('--remove-missing',
+            action='store_true', dest='remove_missing', default=False,
+            help="Remove keys in the bucket for files locally missing."),
         optparse.make_option('--dry-run',
             action='store_true', dest='dry_run', default=False,
             help="Do a dry-run to show what files would be affected."),
@@ -77,6 +83,7 @@ class Command(BaseCommand):
 
         self.verbosity = int(options.get('verbosity'))
         self.prefix = options.get('prefix')
+        self.remove_missing = options.get('remove_missing')
         self.dry_run = options.get('dry_run')
 
         if not hasattr(settings, 'BUCKET_UPLOADS'):
@@ -86,12 +93,14 @@ class Command(BaseCommand):
         # Now call the syncing method to walk the MEDIA_ROOT directory and
         # upload all files found.
         self.upload_pending_to_s3()
-        self.delete_pending_from_s3()
+        if self.remove_missing:
+            self.delete_pending_from_s3()
 
         print
         print "%d files uploaded (%d remaining)." % (self.upload_count,
                                                         self.remaining_count)
-        print "%d files deleted (%s remaining)." % (self.deleted_count,
+        if self.remove_missing:
+            print "%d files deleted (%s remaining)." % (self.deleted_count,
                                                 self.remaining_delete_count)
         if self.dry_run:
             print 'THIS IS A DRY RUN, NO ACTUAL CHANGES.'

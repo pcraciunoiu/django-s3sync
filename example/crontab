@@ -1,0 +1,2 @@
+# Sync all pending uploads and deletions every hour.
+10 * * * * /path/to/python /your/path/to/manage.py s3sync_pending --prefix=media --remove-missing
