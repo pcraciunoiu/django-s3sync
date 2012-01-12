@@ -33,13 +33,17 @@ Installation
 
     DEFAULT_FILE_STORAGE = 's3sync.storage.S3PendingStorage'
 
-#. Provide these settings, all required (for now)::
+#. Provide these settings, all required::
 
     MEDIA_ROOT = '/full/path/to/your/media'
     AWS_ACCESS_KEY_ID = 'your-amazon-access-key-id'
     AWS_SECRET_ACCESS_KEY = 'your-amazon-secret-access-key'
     BUCKET_UPLOADS = 's3-2.sowink.net'
     BUCKET_UPLOADS_URL = '//s3-2.sowink.net/media/'
+
+    # For your production site, link to the S3 uploads bucket.
+    # This setting is optional for development.
+    PRODUCTION = True
 
 #. Run this on a cron::
 
@@ -105,7 +109,7 @@ Command options are::
 s3sync.storage.S3PendingStorage
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Required settings: ``BUCKET_UPLOADS_URL``
+Required settings: ``BUCKET_UPLOADS_URL``, ``PRODUCTION``
 
 
 Full List of Settings
@@ -128,6 +132,9 @@ Full List of Settings
 
 ``BUCKET_UPLOADS_PENDING_DELETE_KEY``
   Cache key to use for storing the list of pending files to be removed from S3.
+
+``PRODUCTION``
+  Set this to True for the storage backend to use ``BUCKET_UPLOADS_URL``.
 
 Contributing
 ============

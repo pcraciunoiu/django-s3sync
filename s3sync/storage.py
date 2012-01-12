@@ -8,6 +8,7 @@ from s3sync.utils import (get_pending_key, get_pending_delete_key,
 deleting_key = get_pending_delete_key()
 pending_key = get_pending_key()
 cache = get_s3sync_cache()
+is_production = getattr(settings, 'PRODUCTION', False)
 
 
 class S3PendingStorage(DjangoStorage):
@@ -17,6 +18,8 @@ class S3PendingStorage(DjangoStorage):
     def delete(self, name):
         """Remove files that were pending, or mark non-pending for deletion."""
         super(S3PendingStorage, self).delete(name)
+        if not is_production:
+            return
         deleting = cache.get(deleting_key, [])
         pending = cache.get(pending_key, [])
         # File was pending? Ok, remove it from upload queue.
@@ -30,6 +33,8 @@ class S3PendingStorage(DjangoStorage):
 
     def save(self, name, content):
         new_name = super(S3PendingStorage, self).save(name, content)
+        if not is_production:
+            return new_name
         cache.set(new_name, True)
         pending = cache.get(pending_key, [])
         if not new_name in pending:
@@ -40,6 +45,6 @@ class S3PendingStorage(DjangoStorage):
     def url(self, name):
         url = super(S3PendingStorage, self).url(name)
         # Is this file pending? Return local URL.
-        if cache.get(name):
+        if cache.get(name) or not is_production:
             return url
         return settings.BUCKET_UPLOADS_URL + name
