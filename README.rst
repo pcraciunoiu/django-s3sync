@@ -8,6 +8,8 @@ Keep your static and user-uploaded media in sync between your local machine and 
 * Fall back to local ``MEDIA_URL`` links for files that have not yet been uploaded to S3 (uses any cache backend to store this list).
 * Automatically link to files on S3 when they have been uploaded.
 
+This project is inspired by `django-extensions's sync_media_s3 <https://github.com/django-extensions/django-extensions/blob/master/django_extensions/management/commands/sync_media_s3.py>`_ management command.
+
 Limitations
 ~~~~~~~~~~~
 
