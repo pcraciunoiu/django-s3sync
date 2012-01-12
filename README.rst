@@ -52,7 +52,8 @@ Installation
 Already using a custom File storage backend?
 --------------------------------------------
 
-Extend s3sync's storage::
+If you're already using your own File storage backend, extend s3sync's storage::
+
     from s3sync.storage import S3PendingStorage
      
     class YourCustomStorage(S3PendingStorage):
@@ -109,6 +110,9 @@ Required settings: ``BUCKET_UPLOADS_URL``
 
 Full List of Settings
 ~~~~~~~~~~~~~~~~~~~~~
+
+``AWS_ACCESS_KEY_ID``, ``AWS_SECRET_ACCESS_KEY``
+  *Required.* Your API keys from Amazon.
 
 ``BUCKET_UPLOADS``
   Name of your upload bucket. Usually 'something.yourdomain.com'
