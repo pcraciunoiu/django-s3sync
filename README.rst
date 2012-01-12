@@ -7,6 +7,9 @@ Keep your static and user-uploaded media in sync between your local machine and 
 * Run a management command periodically to keep your user-uploaded media in sync.
 * Fall back to local ``MEDIA_URL`` links for files that have not yet been uploaded to S3 (uses any cache backend to store this list).
 * Automatically link to files on S3 when they have been uploaded.
+* Easy to set  up cron jobs, management commands to keep your media in sync
+* Efficient sync of pending uploaded and deleted files
+* Optionally deletes files from S3 once they have been deleted locally.
 
 This project is inspired by `django-extensions's sync_media_s3 <https://github.com/django-extensions/django-extensions/blob/master/django_extensions/management/commands/sync_media_s3.py>`_ management command.
 
