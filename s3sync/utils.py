@@ -80,9 +80,12 @@ def upload_file_to_s3(file_key, filename, key, do_gzip=False,
         if (file_size > 1024 and content_type in GZIP_CONTENT_TYPES):
             filedata = compress_string(filedata)
             headers['Content-Encoding'] = 'gzip'
+            gzip_file_size = len(filedata)
             if verbosity > 1:
                 print "\tgzipped: %dk to %dk" % \
-                    (file_size / 1024, len(filedata) / 1024)
+                    (file_size / 1024, gzip_file_size / 1024)
+            file_size = gzip_file_size
+    headers['Content-Length'] = str(file_size)
     if do_expires:
         # HTTP/1.0
         headers['Expires'] = '%s GMT' % (email.Utils.formatdate(
