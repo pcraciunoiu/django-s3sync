@@ -117,7 +117,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         # Check for AWS keys in settings
         try:
-            self.AWS_ACCESS_KEY_ID, self.AWS_SECRET_ACCESS_KEY = get_aws_info()
+            self.AWS_ACCESS_KEY_ID, self.AWS_SECRET_ACCESS_KEY, self.AWS_S3_HOST = get_aws_info()
         except ConfigMissingError:
             raise CommandError('Missing AWS keys from settings file. ' +
                 ' Please supply both AWS_ACCESS_KEY_ID and ' +
