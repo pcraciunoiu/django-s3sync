@@ -26,8 +26,8 @@ class ConfigMissingError(Exception):
 
 def get_bucket_and_key(name):
     """Connect to S3 and grab bucket and key."""
-    key,secret,host = get_aws_info()
-    conn =  S3Connection(key,secret,host=host)
+    key, secret, host = get_aws_info()
+    conn = S3Connection(key, secret, host=host)
     try:
         bucket = conn.get_bucket(name)
     except boto.exception.S3ResponseError:
@@ -39,7 +39,7 @@ def get_aws_info():
     if not hasattr(settings, 'AWS_ACCESS_KEY_ID') or \
         not hasattr(settings, 'AWS_SECRET_ACCESS_KEY'):
         raise ConfigMissingError
-    host = getattr(settings,'AWS_S3_HOST','s3.amazonaws.com')
+    host = getattr(settings, 'AWS_S3_HOST', 's3.amazonaws.com')
     key, secret = settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY
     return key, secret, host
 
