@@ -5,7 +5,7 @@ import os
 import time
 
 import boto.exception
-from boto import connect_s3
+from boto.s3.connection import S3Connection
 
 from django.conf import settings
 from django.core.cache import get_cache
@@ -26,7 +26,8 @@ class ConfigMissingError(Exception):
 
 def get_bucket_and_key(name):
     """Connect to S3 and grab bucket and key."""
-    conn = connect_s3(*get_aws_info())
+    key, secret, host = get_aws_info()
+    conn = S3Connection(key, secret, host=host)
     try:
         bucket = conn.get_bucket(name)
     except boto.exception.S3ResponseError:
@@ -38,8 +39,9 @@ def get_aws_info():
     if not hasattr(settings, 'AWS_ACCESS_KEY_ID') or \
         not hasattr(settings, 'AWS_SECRET_ACCESS_KEY'):
         raise ConfigMissingError
+    host = getattr(settings, 'AWS_S3_HOST', 's3.amazonaws.com')
     key, secret = settings.AWS_ACCESS_KEY_ID, settings.AWS_SECRET_ACCESS_KEY
-    return key, secret
+    return key, secret, host
 
 
 def get_pending_key():

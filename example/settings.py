@@ -25,3 +25,8 @@ BUCKET_UPLOADS_URL = '//example-upload-bucket.yourdomain.com/media/'
 BUCKET_UPLOADS_CACHE_ALIAS = 's3-storage'
 BUCKET_UPLOADS_PENDING_KEY = 's3-pending'
 BUCKET_UPLOADS_PENDING_DELETE_KEY = 's3-pending-delete'
+
+# S3 Host/Region
+# To connect to your S3 host region, you may want to set this to avoid a BrokenPipeException
+# e.g. for EU, 's3-eu-west-1.amazonaws.com'
+AWS_S3_HOST = 's3.amazonaws.com'
